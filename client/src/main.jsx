@@ -1,10 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client'; // Updated import for React 18
+import App from './App';
+import './index.css';
+import { CssBaseline } from '@mui/material';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+const rootElement = document.getElementById('root');
+
+// Create a root using createRoot
+const root = ReactDOM.createRoot(rootElement);
+
+// Render the App component to the root
+root.render(
+  <React.StrictMode>
+    <CssBaseline />
     <App />
-  </StrictMode>,
-)
+  </React.StrictMode>
+);

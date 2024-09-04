@@ -2,23 +2,25 @@
 
 /* Global body styles */
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
+  font-family: 'Outfit', sans-serif;
+  background-color: #EAF0FF;
+  color: #1C2F41;
   margin: 0;
   padding: 0;
   line-height: 1.6;
+  box-sizing: border-box;
 }
 
 /* Gradient background for navbar */
 .navbar {
-  background: linear-gradient(to right, #1e3a8a, #4ade80);
-  color: white;
+  background: #EAF0FF;
+  color: #1C2F41;
+  height: auto;
 }
 
 /* Gradient background for footer (darker) */
 .footer {
-  background: linear-gradient(to right, #142850, #3ba67a); /* Darker shades of blue and green */
+  background: #0155A5;
   color: white;
 }
 

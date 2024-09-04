@@ -1,19 +1,28 @@
 // src/components/Footer.jsx
 
-
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebook, faTwitter, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import { Container, Row, Col } from 'react-bootstrap';
+import logo from '../assets/logo.png'; // Import the logo
 
-const Footer = ({ links, socialMediaLinks, contactInfo, copyright }) => (
-  <footer className="footer mt-auto pt-2 pb-1" style={{ background: 'linear-gradient(to right, #142850, #3ba67a)' }}>
+const Footer = ({ links, contactInfo, copyright }) => (
+  <footer className="footer mt-auto pt-4 pb-3" style={{ backgroundColor: '#0155A5', color: '#FFFFFF' }}>
     <Container>
-      <Row className="mb-2">
-        <Col md={4}>
-          <h6 className="text-uppercase" style={{ fontSize: '0.85rem' }}>Quick Links</h6>
-          <ul className="list-unstyled" style={{ fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+      <Row className="align-items-center text-center text-md-start mb-4">
+        {/* Logo and Hospital Name */}
+        <Col md={4} className="d-flex flex-column align-items-center align-items-md-start mb-3 mb-md-0">
+          <img
+            src={logo}
+            alt="King Salman Hospital Logo"
+            style={{ width: '60px', height: '60px', marginBottom: '10px' }}
+          />
+          <h6 className="text-uppercase fw-bold mb-0" style={{ fontSize: '1rem' }}>King Salman Hospital</h6>
+        </Col>
+
+        {/* Quick Links */}
+        <Col md={4} className="mb-3 mb-md-0">
+          <h6 className="text-uppercase fw-bold mb-3" style={{ fontSize: '1rem' }}>Quick Links</h6>
+          <ul className="list-unstyled" style={{ fontSize: '0.9rem' }}>
             {links.map((link) => (
               <li key={link.path}>
                 <Link to={link.path} className="text-white text-decoration-none" aria-label={link.name}>
@@ -24,41 +33,27 @@ const Footer = ({ links, socialMediaLinks, contactInfo, copyright }) => (
           </ul>
         </Col>
 
+        {/* Contact Information */}
         <Col md={4}>
-          <h6 className="text-uppercase" style={{ fontSize: '0.85rem' }}>Contact Us</h6>
-          <address style={{ fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+          <h6 className="text-uppercase fw-bold mb-3" style={{ fontSize: '1rem' }}>Contact Us</h6>
+          <address style={{ fontSize: '0.9rem' }}>
             <strong>{contactInfo.name}</strong>
             <br />
             {contactInfo.address}
             <br />
-            Email: <a href={`mailto:${contactInfo.email}`} className="text-white text-decoration-none">{contactInfo.email}</a>
+            Hours: Open 24 hours
             <br />
             Phone: <a href={`tel:${contactInfo.phone}`} className="text-white text-decoration-none">{contactInfo.phone}</a>
+            <br />
+            Email: <a href={`mailto:${contactInfo.email}`} className="text-white text-decoration-none">{contactInfo.email}</a>
           </address>
-        </Col>
-
-        <Col md={4} className="text-center">
-          <h6 className="text-uppercase" style={{ fontSize: '0.85rem' }}>Follow Us</h6>
-          <div>
-            {socialMediaLinks.map((social) => (
-              <a
-                key={social.platform}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white mx-2"
-                aria-label={`Follow us on ${social.platform}`}
-              >
-                <FontAwesomeIcon icon={social.icon} size="lg" />
-              </a>
-            ))}
-          </div>
         </Col>
       </Row>
 
+      {/* Copyright */}
       <Row>
         <Col className="text-center">
-          <p className="text-muted small mb-0" style={{ fontSize: '0.7rem' }}>
+          <p className="text-muted small mb-0" style={{ fontSize: '0.8rem' }}>
             &copy; {new Date().getFullYear()} {copyright}. All rights reserved.
           </p>
         </Col>
@@ -74,13 +69,6 @@ Footer.propTypes = {
       path: PropTypes.string.isRequired,
     })
   ).isRequired,
-  socialMediaLinks: PropTypes.arrayOf(
-    PropTypes.shape({
-      platform: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
-      icon: PropTypes.object.isRequired,
-    })
-  ).isRequired,
   contactInfo: PropTypes.shape({
     name: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired,
@@ -93,22 +81,15 @@ Footer.propTypes = {
 Footer.defaultProps = {
   links: [
     { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about-us' },
-    { name: 'Services', path: '/services' },
-    { name: 'Departments', path: '/departments' },
     { name: 'Contact Us', path: '/contact-us' },
-  ],
-  socialMediaLinks: [
-    { platform: 'Facebook', url: 'https://www.facebook.com', icon: faFacebook },
-    { platform: 'Twitter', url: 'https://www.twitter.com', icon: faTwitter },
-    { platform: 'LinkedIn', url: 'https://www.linkedin.com', icon: faLinkedin },
-    { platform: 'Instagram', url: 'https://www.instagram.com', icon: faInstagram },
+    { name: 'Feedback', path: '/feedback' },
+    { name: 'AdminDashboard', path: '/admin' },
   ],
   contactInfo: {
     name: 'King Salman Hospital',
-    address: '1234 Street Name, City, State, Zip Code',
+    address: 'masyaf district، ala ud din al hanfi rd, Hail 55471',
     email: 'info@kingsalmanhospital.com',
-    phone: '(123) 456-7890',
+    phone: '016 236 2222',
   },
   copyright: 'King Salman Hospital',
 };

@@ -10,14 +10,11 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement,
-  LineElement,
-  PointElement,
 } from 'chart.js';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 // Register required components for charts
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function AdminDashboard() {
   const [feedbackData, setFeedbackData] = useState([]);
@@ -26,6 +23,7 @@ function AdminDashboard() {
     'Staff Helpfulness': 0,
     'Room Environment': 0,
     'Outpatient Process': 0,
+    'Waiting Time': 0,
   });
   const [keyMetrics, setKeyMetrics] = useState({
     totalFeedbacks: 0,
@@ -39,12 +37,14 @@ function AdminDashboard() {
       'Staff Helpfulness': 0,
       'Room Environment': 0,
       'Outpatient Process': 0,
+      'Waiting Time': 0,
     };
     const scoreCounts = {
       Cleanliness: 0,
       'Staff Helpfulness': 0,
       'Room Environment': 0,
       'Outpatient Process': 0,
+      'Waiting Time': 0,
     };
 
     feedbackData.forEach((feedback) => {
@@ -56,34 +56,56 @@ function AdminDashboard() {
         scoreSums['Staff Helpfulness'] += feedback[2];
         scoreCounts['Staff Helpfulness']++;
       }
-      if (feedback[3] !== undefined && typeof feedback[3] === 'number') {
-        scoreSums['Room Environment'] += feedback[3];
-        scoreCounts['Room Environment']++;
+      if (feedback.patientType === 'Inpatient') {
+        if (feedback[3] !== undefined && typeof feedback[3] === 'string') {
+          const roomEnvironmentRating = {
+            Excellent: 5,
+            Good: 4,
+            Fair: 3,
+            Poor: 2,
+          }[feedback[3]] || 0;
+          scoreSums['Room Environment'] += roomEnvironmentRating;
+          scoreCounts['Room Environment']++;
+        }
+        if (feedback[4] && feedback[4] !== 'None') {
+          scoreCounts['Room Environment']++;
+        }
       }
-      if (feedback[5] !== undefined && typeof feedback[5] === 'number') {
-        scoreSums['Outpatient Process'] += feedback[5];
-        scoreCounts['Outpatient Process']++;
+      if (feedback.patientType === 'Outpatient') {
+        if (feedback[5] !== undefined && typeof feedback[5] === 'string') {
+          const outpatientProcessRating = feedback[5] === 'Yes' ? 5 : 1;
+          scoreSums['Outpatient Process'] += outpatientProcessRating;
+          scoreCounts['Outpatient Process']++;
+        }
+        if (feedback[6] !== undefined && typeof feedback[6] === 'string') {
+          const waitingTimeRating = {
+            'Less than 30 minutes': 5,
+            '30-60 minutes': 3,
+            'More than 1 hour': 1,
+          }[feedback[6]] || 0;
+          scoreSums['Waiting Time'] += waitingTimeRating;
+          scoreCounts['Waiting Time']++;
+        }
       }
     });
 
-    // Calculate average scores safely
     const averages = {
       Cleanliness: scoreCounts['Cleanliness'] ? (scoreSums['Cleanliness'] / scoreCounts['Cleanliness']).toFixed(1) : 0,
       'Staff Helpfulness': scoreCounts['Staff Helpfulness'] ? (scoreSums['Staff Helpfulness'] / scoreCounts['Staff Helpfulness']).toFixed(1) : 0,
       'Room Environment': scoreCounts['Room Environment'] ? (scoreSums['Room Environment'] / scoreCounts['Room Environment']).toFixed(1) : 0,
       'Outpatient Process': scoreCounts['Outpatient Process'] ? (scoreSums['Outpatient Process'] / scoreCounts['Outpatient Process']).toFixed(1) : 0,
+      'Waiting Time': scoreCounts['Waiting Time'] ? (scoreSums['Waiting Time'] / scoreCounts['Waiting Time']).toFixed(1) : 0,
     };
 
     setAverageScores(averages);
     console.log('Calculated Average Scores:', averages); // Debug: Check average scores
   }, []);
 
-  const calculateKeyMetrics = useCallback((feedbackData) => {
+  const calculateKeyMetrics = useCallback(() => {
     const totalFeedbacks = feedbackData.length;
     const totalScoreSum = Object.values(averageScores).reduce((acc, score) => acc + parseFloat(score), 0);
     const overallAverage = (totalScoreSum / Object.keys(averageScores).length).toFixed(1);
-    
-    // Identify areas for improvement (average score < 4)
+
     const areasForImprovement = Object.keys(averageScores).filter(key => averageScores[key] < 4);
 
     setKeyMetrics({
@@ -91,25 +113,31 @@ function AdminDashboard() {
       overallAverage,
       areasForImprovement,
     });
-
-    console.log('Calculated Key Metrics:', keyMetrics); // Debug: Check key metrics
-  }, [averageScores]);
+  }, [feedbackData, averageScores]);
 
   useEffect(() => {
     // Fetch feedback data from local storage
     const storedFeedback = localStorage.getItem('feedbackData');
-    
+
     if (storedFeedback) {
       const parsedFeedback = JSON.parse(storedFeedback);
       console.log('Parsed Feedback Data:', parsedFeedback); // Debug: Check parsed data
-      
+
       setFeedbackData(parsedFeedback);
-      calculateAverageScores(parsedFeedback);
-      calculateKeyMetrics(parsedFeedback);
     } else {
       console.log('No feedback data found in local storage.');
     }
-  }, [calculateAverageScores, calculateKeyMetrics]);
+  }, []);
+
+  useEffect(() => {
+    if (feedbackData.length > 0) {
+      calculateAverageScores(feedbackData);
+    }
+  }, [feedbackData, calculateAverageScores]);
+
+  useEffect(() => {
+    calculateKeyMetrics();
+  }, [averageScores, calculateKeyMetrics]);
 
   const dataBar = {
     labels: Object.keys(averageScores),
@@ -120,32 +148,6 @@ function AdminDashboard() {
         borderColor: 'rgba(0,0,0,1)',
         borderWidth: 2,
         data: Object.values(averageScores),
-      },
-    ],
-  };
-
-  const dataPie = {
-    labels: Object.keys(averageScores),
-    datasets: [
-      {
-        label: 'Feedback Distribution',
-        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
-        data: Object.values(averageScores),
-      },
-    ],
-  };
-
-  const dataLine = {
-    labels: Object.keys(averageScores),
-    datasets: [
-      {
-        label: 'Trends in Feedback Over Time',
-        fill: false,
-        lineTension: 0.5,
-        backgroundColor: 'rgba(75,192,192,1)',
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 2,
-        data: Object.values(averageScores), // Placeholder data for trends
       },
     ],
   };
@@ -220,24 +222,6 @@ function AdminDashboard() {
         </Col>
       </Row>
 
-      {/* Pie Chart for Feedback Distribution */}
-      <Row className="mb-4">
-        <Col>
-          <Card className="p-3 shadow-sm">
-            <Pie data={dataPie} options={{ ...options, title: { ...options.title, text: 'Feedback Distribution' } }} />
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Line Chart for Feedback Trends */}
-      <Row className="mb-4">
-        <Col>
-          <Card className="p-3 shadow-sm">
-            <Line data={dataLine} options={{ ...options, title: { ...options.title, text: 'Feedback Trends Over Time' } }} />
-          </Card>
-        </Col>
-      </Row>
-
       {/* Feedback Data Table */}
       <Row>
         <Col>
@@ -247,21 +231,27 @@ function AdminDashboard() {
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Patient Type</th>
                   <th>Cleanliness</th>
                   <th>Staff Helpfulness</th>
-                  <th>Room Environment</th>
-                  <th>Outpatient Process</th>
-                  <th>Comments</th>
+                  <th>Room Environment (Inpatients)</th>
+                  <th>Outpatient Process (Outpatients)</th>
+                  <th>Issues with Food/Medication (Inpatients)</th>
+                  <th>Waiting Time (Outpatients)</th>
+                  <th>Additional Comments</th>
                 </tr>
               </thead>
               <tbody>
                 {feedbackData.map((feedback, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
+                    <td>{feedback.patientType}</td>
                     <td>{feedback[1]}</td>
                     <td>{feedback[2]}</td>
-                    <td>{feedback[3]}</td>
-                    <td>{feedback[5]}</td>
+                    <td>{feedback.patientType === 'Inpatient' ? feedback[3] : 'N/A'}</td>
+                    <td>{feedback.patientType === 'Outpatient' ? feedback[5] : 'N/A'}</td>
+                    <td>{feedback.patientType === 'Inpatient' ? (feedback[4]?.Food ? 'Food' : '') + (feedback[4]?.Medication ? ' Medication' : '') || 'None' : 'N/A'}</td>
+                    <td>{feedback.patientType === 'Outpatient' ? feedback[6] : 'N/A'}</td>
                     <td>{feedback[7] || 'No comments'}</td>
                   </tr>
                 ))}

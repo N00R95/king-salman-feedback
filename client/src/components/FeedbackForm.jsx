@@ -8,11 +8,11 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 function FeedbackForm() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [feedbackData, setFeedbackData] = useState({});
+  const [feedbackData, setFeedbackData] = useState({ patientType: '' });
   const [patientType, setPatientType] = useState('');
   const [isLastQuestion, setIsLastQuestion] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false); // New state to track submission status
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const commonQuestions = [
     { id: 1, text: 'How would you rate the cleanliness of the hospital?', type: 'rating', required: true },
@@ -81,7 +81,7 @@ function FeedbackForm() {
 
   const handlePatientTypeChange = (event) => {
     setPatientType(event.target.value);
-    setFeedbackData({});
+    setFeedbackData({ patientType: event.target.value }); // Include patient type in feedback data
     setCurrentQuestionIndex(0);
   };
 
@@ -105,7 +105,7 @@ function FeedbackForm() {
       const existingFeedback = JSON.parse(localStorage.getItem('feedbackData')) || [];
       existingFeedback.push(feedbackData);
       localStorage.setItem('feedbackData', JSON.stringify(existingFeedback));
-      setIsSubmitted(true); // Set submission status to true
+      setIsSubmitted(true);
     }
   };
 

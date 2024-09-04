@@ -31,30 +31,46 @@ const Statistics = ({ years, clinics, specialties, beds }) => {
 
   return (
     <div className="container py-5">
-      <h2 className="text-center mb-4 bold" style={{ color: '#1e3a8a' }}>Hospital Statistics</h2>
+      <h2 className="text-center mb-4 fw-bold" style={{ color: '#1C2F41', fontSize: '2.5rem',fontWeight:'bolder'}}>Hospital Statistics</h2> {/* Updated font size */}
       <div className="row">
         <div className="col-md-3 mb-3">
-          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#1e3a8a', color: '#ffffff' }}>
-            <h3 className="h5 mb-3">Years in Operation</h3>
-            <p className="display-4" style={{ color: '#4ade80' }}>{displayYears}</p>
+          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#FFFFFF', color: '#1C2F41' }}>
+          
+            <p className="display-4">
+              <span style={{ color: '#1C2F41' }}>{displayYears}</span>
+              <span style={{ color: '#2FB95D' }}>+</span> {/* Added "+" sign */}
+              <h3 className="h5 mb-3">Years in Operation</h3>
+            </p>
           </div>
         </div>
         <div className="col-md-3 mb-3">
-          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#1e3a8a', color: '#ffffff' }}>
-            <h3 className="h5 mb-3">Clinics</h3>
-            <p className="display-4" style={{ color: '#4ade80' }}>{displayClinics}</p>
+          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#FFFFFF', color: '#1C2F41' }}>
+           
+            <p className="display-4">
+              <span style={{ color: '#1C2F41' }}>{displayClinics}</span>
+              <span style={{ color: '#2FB95D' }}>+</span> {/* Added "+" sign */}
+              <h3 className="h5 mb-3">Clinics</h3>
+            </p>
           </div>
         </div>
         <div className="col-md-3 mb-3">
-          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#1e3a8a', color: '#ffffff' }}>
-            <h3 className="h5 mb-3">Specialties</h3>
-            <p className="display-4" style={{ color: '#4ade80' }}>{displaySpecialties}</p>
+          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#FFFFFF', color: '#1C2F41' }}>
+           
+            <p className="display-4">
+              <span style={{ color: '#1C2F41' }}>{displaySpecialties}</span>
+              <span style={{ color: '#2FB95D' }}>+</span> {/* Added "+" sign */}
+              <h3 className="h5 mb-3">Specialties</h3>
+            </p>
           </div>
         </div>
         <div className="col-md-3 mb-3">
-          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#1e3a8a', color: '#ffffff' }}>
-            <h3 className="h5 mb-3">Bed Capacity</h3>
-            <p className="display-4" style={{ color: '#4ade80' }}>{displayBeds}</p>
+          <div className="p-4 rounded shadow-sm text-center" style={{ backgroundColor: '#FFFFFF', color: '#1C2F41' }}>
+            
+            <p className="display-4">
+              <span style={{ color: '#1C2F41' }}>{displayBeds}</span>
+              <span style={{ color: '#2FB95D' }}>+</span> {/* Added "+" sign */}
+              <h3 className="h5 mb-3">Bed Capacity</h3>
+            </p>
           </div>
         </div>
       </div>

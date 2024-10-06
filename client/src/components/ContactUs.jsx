@@ -1,5 +1,3 @@
-// src/components/ContactUs.jsx
-
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
 
@@ -36,12 +34,25 @@ function ContactUs() {
     
     // If no errors, proceed to submit
     setErrors({});
-    console.log('Form submitted:', formData);
+
+    // Create a form and append form data for submission
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formsubmit.co/your-email@example.com'; // Replace with your email
+
+    Object.keys(formData).forEach(key => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = formData[key];
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit(); // Submit form via FormSubmit
     
-    // Display thank you message
+    // Display thank you message and reset form
     setSubmitted(true);
-    
-    // Reset form fields
     setFormData({
       name: '',
       email: '',
